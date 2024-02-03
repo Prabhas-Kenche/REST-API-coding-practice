@@ -141,7 +141,7 @@ app.post('/todos/', async (request, response) => {
 
 //API - 4
 app.put('/todos/:todoId/', async (request, response) => {
-  const {todoId} = request.body
+  const {todoId} = request.params
   let updateColumn = ''
   const requestBody = request.body
   switch (true) {
@@ -155,17 +155,14 @@ app.put('/todos/:todoId/', async (request, response) => {
       updateColumn = 'Todo'
       break
   }
-
   const previousTodoQuery = `
-  SELECT
-    *
-  FROM
-    todo
-  WHERE
-    id = ${todoId};`
-
+    SELECT 
+      * 
+    FROM 
+      todo 
+    WHERE 
+      id = ${todoId};`
   const previousTodo = await db.get(previousTodoQuery)
-
   const {
     todo = previousTodo.todo,
     priority = previousTodo.priority,
@@ -173,14 +170,13 @@ app.put('/todos/:todoId/', async (request, response) => {
   } = request.body
 
   const updateTodoQuery = `
-  UPDATE
-    todo
-  SET
-    todo='${todo}',
-    priority='${priority}',
-    status='${status}'
-  WHERE
-    id=${todoId};`
+    UPDATE 
+      todo 
+    SET 
+      todo='${todo}', 
+      priority='${priority}', 
+      status='${status}' 
+    WHERE id = ${todoId};`
 
   await db.run(updateTodoQuery)
   response.send(`${updateColumn} Updated`)
@@ -195,7 +191,7 @@ app.delete('/todos/:todoId/', async (request, response) => {
     WHERE
       id = ${todoId};`
   await db.run(deleteTodoQuery)
-  response.send('Book Deleted Successfully')
+  response.send('Todo Deleted')
 })
 
 module.exports = app
